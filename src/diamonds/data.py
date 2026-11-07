@@ -46,7 +46,7 @@ def load_data(csv_path: str | Path | None = None) -> pd.DataFrame:
 
     df = df[REQUIRED_COLUMNS].copy()
     # loading can produce diff dataType
-    for col in CATEGORICAL_COLUMNS: 
+    for col in CATEGORICAL_COLUMNS:
         df[col] = df[col].astype(str)
     for col in NUMERIC_COLUMNS:
         df[col] = pd.to_numeric(df[col])
