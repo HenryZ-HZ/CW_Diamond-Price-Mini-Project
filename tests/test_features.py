@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from diamonds.features import CLARITY_ORDER, COLOR_ORDER, CUT_ORDER, encode_ordinal
+from diamonds.data import CLARITY_ORDER, COLOR_ORDER, CUT_ORDER, encode_ordinal
 
 
 def make_frame(cut, color, clarity) -> pd.DataFrame:
@@ -14,11 +14,9 @@ def test_ordinal_encoding_order():
     color = encode_ordinal(make_frame("Ideal", COLOR_ORDER, "IF"))["color"]
     clarity = encode_ordinal(make_frame("Ideal", "D", CLARITY_ORDER))["clarity"]
 
-    # Codes strictly increase from worst to best: Fair < ... < Ideal, J < ... < D, I1 < ... < IF.
     for codes in (cut, color, clarity):
         assert codes.is_monotonic_increasing and codes.is_unique
 
-    # And the order lists themselves are the real-world grading order.
     assert CUT_ORDER == ["Fair", "Good", "Very Good", "Premium", "Ideal"]
     assert COLOR_ORDER == ["J", "I", "H", "G", "F", "E", "D"]
     assert CLARITY_ORDER == ["I1", "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1", "IF"]

@@ -1,7 +1,6 @@
 import pytest
 
-from diamonds.data import clean
-from diamonds.features import encode_ordinal
+from diamonds.data import clean, encode_ordinal
 from diamonds.model import evaluate, split, train_baseline, train_forest
 
 

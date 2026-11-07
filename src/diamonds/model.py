@@ -1,7 +1,5 @@
 """Train/test split, the two models and their test-set evaluation."""
 
-from __future__ import annotations
-
 import pandas as pd
 from sklearn.base import RegressorMixin
 from sklearn.ensemble import RandomForestRegressor
@@ -18,33 +16,24 @@ TEST_SIZE = 0.25
 
 
 def split(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
-    """
-    Split an encoded frame into X_train, X_test, y_train, y_test.
-    """
+    """Use a fixed split so model results can be compared."""
     X = df[FOREST_FEATURES]
     y = df[TARGET]
     return train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
 
 
 def train_baseline(X_train: pd.DataFrame, y_train: pd.Series) -> LinearRegression:
-    """
-    Linear regression on carat only: the simplest model worth beating.
-    """
+    """Fit the baseline using carat alone."""
     return LinearRegression().fit(X_train[BASELINE_FEATURES], y_train)
 
 
 def train_forest(X_train: pd.DataFrame, y_train: pd.Series) -> RandomForestRegressor:
-    """
-    Random forest on all features, with default hyperparameters.
-    """
     forest = RandomForestRegressor(n_estimators=100, random_state=RANDOM_STATE, n_jobs=-1)
     return forest.fit(X_train[FOREST_FEATURES], y_train)
 
 
 def evaluate(model: RegressorMixin, X_test: pd.DataFrame, y_test: pd.Series) -> dict[str, float]:
-    """
-    Score a fitted model on the test set: R² and mean absolute error in USD.
-    """
+    """Return test R² and mean absolute error in USD."""
     predictions = model.predict(X_test[list(model.feature_names_in_)])
     return {
         "r2": float(r2_score(y_test, predictions)),
@@ -53,11 +42,9 @@ def evaluate(model: RegressorMixin, X_test: pd.DataFrame, y_test: pd.Series) -> 
 
 
 def feature_importances(forest: RandomForestRegressor) -> dict[str, float]:
-    """
-    Return the forest's feature importances, largest first.
-    """
+    """Return feature importances from largest to smallest."""
     pairs = zip(forest.feature_names_in_, forest.feature_importances_, strict=True)
-    
+
     sorted_pairs = sorted(pairs, key=lambda pair: pair[1], reverse=True)
 
     result = {}
