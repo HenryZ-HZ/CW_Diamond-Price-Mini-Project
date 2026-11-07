@@ -1,7 +1,5 @@
 """Loading and cleaning the diamonds dataset."""
 
-from __future__ import annotations
-
 from pathlib import Path
 
 import pandas as pd
@@ -11,15 +9,15 @@ CATEGORICAL_COLUMNS = ["cut", "color", "clarity"]
 REQUIRED_COLUMNS = ["carat", "cut", "color", "clarity", "depth", "table", "price", "x", "y", "z"]
 DIMENSION_COLUMNS = ["x", "y", "z"]
 
-# Largest plausible length, width or depth of a diamond, in mm.
+# Remove likely measurement errors above 20 mm.
 MAX_DIMENSION_MM = 20.0
 
-# Each list runs from worst to best, so a higher code always means a better grade.
+# Grades run from worst to best.
 CUT_ORDER = ["Fair", "Good", "Very Good", "Premium", "Ideal"]
 COLOR_ORDER = ["J", "I", "H", "G", "F", "E", "D"]
 CLARITY_ORDER = ["I1", "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1", "IF"]
 
-ORDINAL_LEVELS: dict[str, list[str]] = {
+ORDINAL_LEVELS = {
     "cut": CUT_ORDER,
     "color": COLOR_ORDER,
     "clarity": CLARITY_ORDER,
@@ -27,9 +25,7 @@ ORDINAL_LEVELS: dict[str, list[str]] = {
 
 
 def load_data(csv_path: str | Path | None = None) -> pd.DataFrame:
-    """
-    Load the diamonds data from a local CSV, or from seaborn when no path is given.
-    """
+    """Load a local CSV, or the seaborn dataset if no path is given."""
     if csv_path is not None and not isinstance(csv_path, (str, Path)):
         raise TypeError("csv_path must be a string, Path, or None")
 
@@ -58,10 +54,8 @@ def load_data(csv_path: str | Path | None = None) -> pd.DataFrame:
 
 
 def clean(df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
-    """
-    Remove invalid rows (duplicates, zero/negative, outlier) and report how many each rule removed.
-    """
-    removed: dict[str, int] = {}
+    """Remove duplicates and invalid dimensions, keeping counts for each rule."""
+    removed = {}
 
     before = len(df)
     df = df.drop_duplicates()
@@ -79,9 +73,7 @@ def clean(df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
 
 
 def encode_ordinal(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Return a copy of ``df`` with cut, color and clarity replaced by integer codes.
-    """
+    """Encode cut, color and clarity from worst to best, leaving the input unchanged."""
     out = df.copy()
     for col, levels in ORDINAL_LEVELS.items():
         codes = {level: i for i, level in enumerate(levels)}

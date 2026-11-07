@@ -1,7 +1,5 @@
 """Command-line entry point: ``diamonds train [--csv PATH] [--output PATH]``."""
 
-from __future__ import annotations
-
 import argparse
 import json
 import sys

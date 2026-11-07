@@ -58,7 +58,6 @@ docker run --rm -v "$PWD/data:/data" diamond-price train --csv /data/diamonds.cs
 ```bash
 pytest
 ruff check .
-ruff format --check .
 ```
 
 12 tests, all offline on `data/sample.csv`. The sample contains 10 bad rows on purpose
@@ -87,7 +86,7 @@ tests/
 
 CI (`.github/workflows/ci.yml`) runs on every push and pull request to `master`:
 
-1. **test** job: ruff lint, ruff format check and pytest on Python 3.11 and 3.12
+1. **test** job: ruff lint and pytest on Python 3.11 and 3.12
    (matrix, `fail-fast: false`, pip cache).
 2. **docker** job, only if `test` passes: build the image and smoke-test it by running it
    and checking its output for the forest result.
