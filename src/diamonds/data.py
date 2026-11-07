@@ -45,8 +45,8 @@ def load_data(csv_path: str | Path | None = None) -> pd.DataFrame:
         raise ValueError(f"Input data is missing required columns: {missing}")
 
     df = df[REQUIRED_COLUMNS].copy()
-    # Seaborn uses categorical columns; CSV files load them as strings.
-    for col in CATEGORICAL_COLUMNS:
+    # loading can produce diff dataType
+    for col in CATEGORICAL_COLUMNS: 
         df[col] = df[col].astype(str)
     for col in NUMERIC_COLUMNS:
         df[col] = pd.to_numeric(df[col])
